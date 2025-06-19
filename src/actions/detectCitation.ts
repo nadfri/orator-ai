@@ -1,4 +1,4 @@
-'use server';
+"use server";
 
 export async function detectCitation({
   text,
@@ -12,7 +12,9 @@ export async function detectCitation({
   const finalApiKey = apiKey || process.env.OPENROUTER_API_KEY;
 
   if (!finalApiKey) {
-    return { error: "Clé API non configurée. Veuillez l'ajouter dans les paramètres." };
+    return {
+      error: "Clé API non configurée. Veuillez l'ajouter dans les paramètres.",
+    };
   }
 
   const prompt = `
@@ -39,29 +41,32 @@ export async function detectCitation({
     Voici le texte à analyser : "${text}"
   `;
   try {
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${finalApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model,
-        messages: [{ role: 'user', content: prompt }],
-      }),
-    });
+    const response = await fetch(
+      "https://openrouter.ai/api/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${finalApiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model,
+          messages: [{ role: "user", content: prompt }],
+        }),
+      }
+    );
     if (!response.ok) {
       return { error: `Erreur API: ${response.status} ${response.statusText}` };
     }
     const data = await response.json();
-    let content = data.choices?.[0]?.message?.content || '';
-    content = content.replace(/^```json\s*|```$/g, '').trim();
+    let content = data.choices?.[0]?.message?.content || "";
+    content = content.replace(/^```json\s*|```$/g, "").trim();
     try {
       return JSON.parse(content);
     } catch (e) {
-      return { error: 'Erreur de parsing JSON.', raw: content };
+      return { error: "Erreur de parsing JSON.", raw: content };
     }
   } catch (e) {
-    return { error: 'Erreur réseau ou serveur.', details: String(e) };
+    return { error: "Erreur réseau ou serveur.", details: String(e) };
   }
 }

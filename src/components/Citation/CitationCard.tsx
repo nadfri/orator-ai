@@ -15,22 +15,24 @@ export default function CitationCard({
 }: CitationCardProps) {
   if (!show) return null;
   return (
-    <div className='w-full p-6 md:p-8 rounded-xl shadow bg-gray-800 border border-gray-700'>
-      <h2 className='text-2xl md:text-3xl font-bold mb-3 text-blue-400'>
-        Citation Détectée :
+    <div className="w-full  mx-auto p-3 rounded-lg shadow bg-gray-800 border border-gray-700 flex flex-col gap-2">
+      <h2 className="text-lg font-bold mb-1 text-blue-400 text-center">
+        Citation détectée
       </h2>
-      <blockquote className='text-lg md:text-xl italic border-l-4 border-blue-400 pl-4 py-2 mb-4'>
-        <p className='text-gray-100'>{citation}</p>
+      <blockquote className="text-base italic border-l-4 border-blue-400 pl-3 py-1 mb-1 text-gray-100 bg-gray-700 rounded">
+        {citation}
       </blockquote>
-      <p className='text-md md:text-lg text-gray-300'>
-        <strong className='font-semibold'>Auteur :</strong> {auteur}
-      </p>
-      <p className='text-md md:text-lg text-gray-300'>
-        <strong className='font-semibold'>Source :</strong> {source}
-      </p>
-      <p className='text-md md:text-lg text-gray-300'>
-        <strong className='font-semibold'>Date :</strong> {date}
-      </p>
+      <div className="flex flex-col gap-1 text-sm text-gray-300">
+        <span>
+          <span className="font-semibold">Auteur :</span> {auteur}
+        </span>
+        <span>
+          <span className="font-semibold">Source :</span> {source}
+        </span>
+        <span>
+          <span className="font-semibold">Date :</span> {date}
+        </span>
+      </div>
     </div>
   );
 }

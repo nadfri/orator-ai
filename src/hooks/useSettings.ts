@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from "react";
 
 export const useSettings = () => {
   // Clé API
-  const [apiKey, setApiKey] = useState('');
+  const [apiKey, setApiKey] = useState("");
   // Modèle LLM
-  const [model, setModel] = useState('deepseek/deepseek-chat-v3-0324');
+  const [model, setModel] = useState("deepseek/deepseek-chat-v3-0324");
   // Affichage du panneau de settings
   const [showSettings, setShowSettings] = useState(false);
 
   // Charger depuis localStorage au montage
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const storedKey = localStorage.getItem('openRouterApiKey');
+    if (typeof window !== "undefined") {
+      const storedKey = localStorage.getItem("openRouterApiKey");
       if (storedKey) setApiKey(storedKey);
-      const storedModel = localStorage.getItem('llmModel');
+      const storedModel = localStorage.getItem("llmModel");
       if (storedModel) setModel(storedModel);
     }
   }, []);
@@ -23,11 +23,11 @@ export const useSettings = () => {
   // Mettre à jour la clé API
   const updateApiKey = (newApiKey: string) => {
     setApiKey(newApiKey);
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       if (newApiKey) {
-        localStorage.setItem('openRouterApiKey', newApiKey);
+        localStorage.setItem("openRouterApiKey", newApiKey);
       } else {
-        localStorage.removeItem('openRouterApiKey');
+        localStorage.removeItem("openRouterApiKey");
       }
     }
   };
@@ -35,8 +35,8 @@ export const useSettings = () => {
   // Mettre à jour le modèle
   const updateModel = (newModel: string) => {
     setModel(newModel);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('llmModel', newModel);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("llmModel", newModel);
     }
   };
 
@@ -51,7 +51,7 @@ export const useSettings = () => {
   ) => {
     updateApiKey(newApiKey);
     updateModel(newModel);
-    showNotification('Paramètres enregistrés.', 'green');
+    showNotification("Paramètres enregistrés.", "green");
     closeSettings();
   };
 
