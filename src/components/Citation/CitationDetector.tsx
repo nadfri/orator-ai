@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 
-import { detectCitation } from "../../actions/detectCitation";
-import { useSettings } from "../../hooks/useSettings";
-import { useSpeechRecognition } from "../../hooks/useSpeechRecognition";
-import type { Citation, DetectionResult, StatusType } from "../../types";
+import { detectCitation } from "@/actions/detectCitation";
+import { useSettings } from "@/hooks/useSettings";
+import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
+import type { Citation, DetectionResult, StatusType } from "@/types";
 import Loader from "../Loader";
 import MicControls from "../MicControls";
 import Status from "../Status";
@@ -15,7 +15,7 @@ import CitationsHistory from "./CitationsHistory";
 
 export default function CitationDetector() {
   const { apiKey, model } = useSettings();
-  
+
   const [status, setStatus] = useState<StatusType>("default");
   const [customStatusMessage, setCustomStatusMessage] = useState<
     string | undefined
@@ -35,6 +35,7 @@ export default function CitationDetector() {
         model,
         apiKey: apiKey || undefined,
       })) as DetectionResult;
+
       setLoader(false);
       if (
         res?.citationTrouvee &&
@@ -98,13 +99,7 @@ export default function CitationDetector() {
       />
 
       {/* Citation détectée */}
-      <CitationCard
-        citation={citation?.citation || ""}
-        auteur={citation?.auteur || ""}
-        source={citation?.source || ""}
-        date={citation?.date || ""}
-        show={!!citation}
-      />
+      {citation && <CitationCard citation={citation} />}
 
       {/* Historique */}
       <CitationsHistory citations={citationsHistory} />
