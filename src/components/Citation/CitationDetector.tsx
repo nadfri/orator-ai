@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { detectCitation } from "@/actions/detectCitation";
 import { useSettings } from "@/hooks/useSettings";
@@ -17,25 +17,31 @@ export default function CitationDetector() {
   const { apiKey, model } = useSettings();
 
   const [status, setStatus] = useState<StatusType>("default");
-  const [customStatusMessage, setCustomStatusMessage] = useState<
-    string | undefined
-  >(undefined);
   const [loader, setLoader] = useState(false);
   const [citation, setCitation] = useState<Citation | null>(null);
   const [citationsHistory, setCitationsHistory] = useState<Citation[]>([]);
 
-  const { isListening, transcript, start, stop } = useSpeechRecognition(
-    async (finalText: string) => {
+  const {
+    isListening,
+    transcript,
+    finalTranscript,
+    start,
+    stop,
+    resetFinalTranscript,
+  } = useSpeechRecognition();
+
+  // Détection de citation sur finalTranscript
+  useEffect(() => {
+    if (!finalTranscript) return;
+    const detect = async () => {
       setLoader(true);
       setCitation(null);
       setStatus("searching");
-      setCustomStatusMessage(undefined);
       const res = (await detectCitation({
-        text: finalText,
+        text: finalTranscript,
         model,
         apiKey: apiKey || undefined,
       })) as DetectionResult;
-
       setLoader(false);
       if (
         res?.citationTrouvee &&
@@ -50,30 +56,29 @@ export default function CitationDetector() {
           source: res.source,
           date: res.date,
         };
+
         setCitation(newCitation);
         setStatus("found");
-        setCustomStatusMessage(undefined);
         setCitationsHistory((prev) => [newCitation, ...prev]);
       } else if (res?.citationTrouvee === false) {
         setCitation(null);
         setStatus("notfound");
-        setCustomStatusMessage(undefined);
       } else {
         setCitation(null);
         setStatus("error");
-        setCustomStatusMessage(res?.error);
       }
-    }
-  );
+      resetFinalTranscript();
+    };
+    detect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [finalTranscript]);
 
   const handleMicClick = () => {
     if (isListening) {
       stop();
       setStatus("default");
-      setCustomStatusMessage(undefined);
     } else {
       setStatus("listening");
-      setCustomStatusMessage(undefined);
       start();
     }
   };
@@ -93,10 +98,7 @@ export default function CitationDetector() {
       <Loader show={loader} />
 
       {/* Status */}
-      <Status
-        statusType={status}
-        customMessage={customStatusMessage}
-      />
+      <Status statusType={status} />
 
       {/* Citation détectée */}
       {citation && <CitationCard citation={citation} />}
