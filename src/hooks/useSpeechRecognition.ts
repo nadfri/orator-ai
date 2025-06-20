@@ -2,6 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
+const SpeechRecognition =
+  window.SpeechRecognition || window.webkitSpeechRecognition;
+
 export function useSpeechRecognition() {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState("");
@@ -9,9 +12,8 @@ export function useSpeechRecognition() {
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   useEffect(() => {
-    const SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) return;
+
     recognitionRef.current = new SpeechRecognition();
     recognitionRef.current.lang = "fr-FR";
     recognitionRef.current.continuous = true;
@@ -19,6 +21,7 @@ export function useSpeechRecognition() {
     recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
       let interim = "";
       let final = "";
+
       for (let i = event.resultIndex; i < event.results.length; ++i) {
         if (event.results[i].isFinal) {
           final += event.results[i][0].transcript;
@@ -27,10 +30,12 @@ export function useSpeechRecognition() {
         }
       }
       setTranscript(final + interim);
+
       if (final.trim().length > 5) {
         setFinalTranscript(final.trim());
       }
     };
+
     recognitionRef.current.onend = () => {
       if (isListening && recognitionRef.current) recognitionRef.current.start();
     };

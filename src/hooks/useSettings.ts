@@ -3,14 +3,14 @@
 import { useEffect, useState } from "react";
 
 export const useSettings = () => {
-  // Clé API
+  // API key
   const [apiKey, setApiKey] = useState("");
-  // Modèle LLM
+  // LLM model
   const [model, setModel] = useState("deepseek/deepseek-chat-v3-0324");
-  // Affichage du panneau de settings
+  // Show settings panel
   const [showSettings, setShowSettings] = useState(false);
 
-  // Charger depuis localStorage au montage
+  // Load from localStorage on mount
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedKey = localStorage.getItem("openRouterApiKey");
@@ -20,7 +20,7 @@ export const useSettings = () => {
     }
   }, []);
 
-  // Mettre à jour la clé API
+  // Update API key
   const updateApiKey = (newApiKey: string) => {
     setApiKey(newApiKey);
     if (typeof window !== "undefined") {
@@ -32,7 +32,7 @@ export const useSettings = () => {
     }
   };
 
-  // Mettre à jour le modèle
+  // Update model
   const updateModel = (newModel: string) => {
     setModel(newModel);
     if (typeof window !== "undefined") {
@@ -43,7 +43,7 @@ export const useSettings = () => {
   const openSettings = () => setShowSettings(true);
   const closeSettings = () => setShowSettings(false);
 
-  // Sauvegarder les paramètres
+  // Save settings
   const handleSaveSettings = (
     newApiKey: string,
     newModel: string,

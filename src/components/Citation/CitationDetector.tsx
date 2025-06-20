@@ -5,13 +5,13 @@ import { useEffect, useState } from "react";
 import { detectCitation } from "@/actions/detectCitation";
 import { useSettings } from "@/hooks/useSettings";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
-import type { Citation, DetectionResult, StatusType } from "@/types";
 import Loader from "../Loader";
 import MicControls from "../MicControls";
 import Status from "../Status";
 import Transcription from "../Transcription";
 import CitationCard from "./CitationCard";
 import CitationsHistory from "./CitationsHistory";
+import type { Citation, DetectionResult, StatusType } from "@/types";
 
 export default function CitationDetector() {
   const { apiKey, model } = useSettings();
@@ -30,19 +30,22 @@ export default function CitationDetector() {
     resetFinalTranscript,
   } = useSpeechRecognition();
 
-  // Détection de citation sur finalTranscript
+  // Citation detection on finalTranscript
   useEffect(() => {
     if (!finalTranscript) return;
     const detect = async () => {
       setLoader(true);
       setCitation(null);
       setStatus("searching");
+
       const res = (await detectCitation({
         text: finalTranscript,
         model,
         apiKey: apiKey || undefined,
       })) as DetectionResult;
+
       setLoader(false);
+
       if (
         res?.citationTrouvee &&
         res.citation &&
@@ -59,6 +62,7 @@ export default function CitationDetector() {
 
         setCitation(newCitation);
         setStatus("found");
+
         setCitationsHistory((prev) => [newCitation, ...prev]);
       } else if (res?.citationTrouvee === false) {
         setCitation(null);
@@ -69,6 +73,7 @@ export default function CitationDetector() {
       }
       resetFinalTranscript();
     };
+
     detect();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [finalTranscript]);
@@ -85,7 +90,7 @@ export default function CitationDetector() {
 
   return (
     <div className="w-full flex flex-col items-center space-y-3 sm:space-y-6">
-      {/* Contrôles micro */}
+      {/* Microphone controls */}
       <MicControls
         isListening={isListening}
         onMicClick={handleMicClick}
@@ -100,10 +105,10 @@ export default function CitationDetector() {
       {/* Status */}
       <Status statusType={status} />
 
-      {/* Citation détectée */}
+      {/* Detected citation */}
       {citation && <CitationCard citation={citation} />}
 
-      {/* Historique */}
+      {/* History */}
       <CitationsHistory citations={citationsHistory} />
     </div>
   );

@@ -1,4 +1,4 @@
-// Déclarations minimales pour la Web Speech API (compatibilité TypeScript)
+// Minimal declarations for Web Speech API (TypeScript compatibility)
 
 interface SpeechRecognition extends EventTarget {
   lang: string;

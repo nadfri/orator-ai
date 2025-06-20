@@ -37,7 +37,7 @@ export default function SettingsPanel({
   const [localApiKey, setLocalApiKey] = useState(apiKey);
   const [localModel, setLocalModel] = useState(model);
 
-  // Synchroniser avec les props quand le panneau s'ouvre
+  // Sync with props when panel opens
   useEffect(() => {
     if (show) {
       setLocalApiKey(apiKey);
