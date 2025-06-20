@@ -1,13 +1,9 @@
 import { AlertCircle, CheckCircle, Info } from "lucide-react";
 
+import { StatusType } from "@/types";
+
 type StatusProps = {
-  statusType?:
-    | "default"
-    | "listening"
-    | "searching"
-    | "found"
-    | "notfound"
-    | "error";
+  statusType?: StatusType;
   customMessage?: string;
 };
 

@@ -5,7 +5,7 @@ import { useState } from "react";
 import { detectCitation } from "../../actions/detectCitation";
 import { useSettings } from "../../hooks/useSettings";
 import { useSpeechRecognition } from "../../hooks/useSpeechRecognition";
-import type { Citation, DetectionResult } from "../../types";
+import type { Citation, DetectionResult, StatusType } from "../../types";
 import Loader from "../Loader";
 import MicControls from "../MicControls";
 import Status from "../Status";
@@ -15,9 +15,8 @@ import CitationsHistory from "./CitationsHistory";
 
 export default function CitationDetector() {
   const { apiKey, model } = useSettings();
-  const [statusType, setStatusType] = useState<
-    "default" | "listening" | "searching" | "found" | "notfound" | "error"
-  >("default");
+  
+  const [status, setStatus] = useState<StatusType>("default");
   const [customStatusMessage, setCustomStatusMessage] = useState<
     string | undefined
   >(undefined);
@@ -29,7 +28,7 @@ export default function CitationDetector() {
     async (finalText: string) => {
       setLoader(true);
       setCitation(null);
-      setStatusType("searching");
+      setStatus("searching");
       setCustomStatusMessage(undefined);
       const res = (await detectCitation({
         text: finalText,
@@ -51,16 +50,16 @@ export default function CitationDetector() {
           date: res.date,
         };
         setCitation(newCitation);
-        setStatusType("found");
+        setStatus("found");
         setCustomStatusMessage(undefined);
         setCitationsHistory((prev) => [newCitation, ...prev]);
       } else if (res?.citationTrouvee === false) {
         setCitation(null);
-        setStatusType("notfound");
+        setStatus("notfound");
         setCustomStatusMessage(undefined);
       } else {
         setCitation(null);
-        setStatusType("error");
+        setStatus("error");
         setCustomStatusMessage(res?.error);
       }
     }
@@ -69,10 +68,10 @@ export default function CitationDetector() {
   const handleMicClick = () => {
     if (isListening) {
       stop();
-      setStatusType("default");
+      setStatus("default");
       setCustomStatusMessage(undefined);
     } else {
-      setStatusType("listening");
+      setStatus("listening");
       setCustomStatusMessage(undefined);
       start();
     }
@@ -94,7 +93,7 @@ export default function CitationDetector() {
 
       {/* Status */}
       <Status
-        statusType={statusType}
+        statusType={status}
         customMessage={customStatusMessage}
       />
 

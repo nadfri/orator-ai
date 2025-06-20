@@ -13,3 +13,11 @@ export type DetectionResult = {
   date?: string;
   error?: string;
 };
+
+export type StatusType =
+  | "default"
+  | "listening"
+  | "searching"
+  | "found"
+  | "notfound"
+  | "error";
