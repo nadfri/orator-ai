@@ -5,13 +5,13 @@ import { useEffect, useState } from "react";
 import { detectCitation } from "@/actions/detectCitation";
 import { useSettings } from "@/hooks/useSettings";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
+import type { Citation, DetectionResult, StatusType } from "@/types";
 import Loader from "../Loader";
 import MicControls from "../MicControls";
 import Status from "../Status";
 import Transcription from "../Transcription";
 import CitationCard from "./CitationCard";
 import CitationsHistory from "./CitationsHistory";
-import type { Citation, DetectionResult, StatusType } from "@/types";
 
 export default function CitationDetector() {
   const { apiKey, model } = useSettings();
@@ -75,7 +75,6 @@ export default function CitationDetector() {
     };
 
     detect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [finalTranscript]);
 
   const handleMicClick = () => {
@@ -90,12 +89,6 @@ export default function CitationDetector() {
 
   return (
     <div className="w-full flex flex-col items-center space-y-3 sm:space-y-6">
-      {/* Microphone controls */}
-      <MicControls
-        isListening={isListening}
-        onMicClick={handleMicClick}
-      />
-
       {/* Transcription */}
       <Transcription text={transcript} />
 
@@ -110,6 +103,12 @@ export default function CitationDetector() {
 
       {/* History */}
       <CitationsHistory citations={citationsHistory} />
+
+      {/* Microphone controls */}
+      <MicControls
+        isListening={isListening}
+        onMicClick={handleMicClick}
+      />
     </div>
   );
 }
