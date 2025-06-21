@@ -25,7 +25,7 @@ export default [
       "prettier/prettier": "warn",
       "no-multiple-empty-lines": ["warn", { max: 1, maxEOF: 1, maxBOF: 0 }],
 
-      // Other rules
+      // Autres règles
       camelcase: "off",
       "import/prefer-default-export": "off",
       "react/jsx-filename-extension": "off",
@@ -60,16 +60,16 @@ export default [
       parser: tsParser,
     },
     rules: {
-      // Disable base ESLint rules replaced by TypeScript
-      "no-unused-vars": "off", // Disabled to avoid duplicates
-      "no-use-before-define": "off", // Disabled to avoid duplicates
+      // Désactiver les règles ESLint de base qui sont remplacées par TypeScript
+      "no-unused-vars": "off", // Désactivé pour éviter les doublons
+      "no-use-before-define": "off", // Désactivé pour éviter les doublons
 
-      // TypeScript rules
+      // Règles TypeScript
       "@typescript-eslint/explicit-function-return-type": "off",
       "@typescript-eslint/explicit-module-boundary-types": "off",
       "@typescript-eslint/no-use-before-define": ["warn"],
       "@typescript-eslint/no-explicit-any": "warn",
-      "@typescript-eslint/no-unused-vars": "warn", // Use TypeScript version
+      "@typescript-eslint/no-unused-vars": "warn", // Utiliser la version TypeScript
     },
   },
   // Add ignore patterns for node_modules and .next

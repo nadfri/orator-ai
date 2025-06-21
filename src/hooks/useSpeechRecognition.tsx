@@ -41,19 +41,20 @@ export function useSpeechRecognition() {
         setFinalTranscript(final.trim());
       }
     };
-
     recognitionRef.current.onend = () => {
       // Always restart if isListening is true (latest value)
       if (isListeningRef.current && recognitionRef.current) {
         try {
           recognitionRef.current.start();
-        } catch (e) {
-          // Ignore if already started
+        } catch (err) {
+          console.error("Error restarting recognition:", err);
         }
       }
     };
     return () => {
-      recognitionRef.current && recognitionRef.current.stop();
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
     };
   }, []); // Do not depend on isListening here, we use isListeningRef
 
@@ -62,14 +63,27 @@ export function useSpeechRecognition() {
     setIsListening(true);
     try {
       recognitionRef.current.start();
-    } catch (e) {
-      // Ignore if already started
+    } catch (err) {
+      console.error("Error starting recognition:", err);
+      // If already started, we can ignore this error
+      if (err instanceof DOMException && err.name === "InvalidStateError") {
+        console.warn("Recognition already started, ignoring error.");
+      } else {
+        throw err; // Re-throw other errors
+      }
     }
   }, []);
 
   const stop = useCallback(() => {
     setIsListening(false);
-    recognitionRef.current && recognitionRef.current.stop();
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch (err) {
+        console.error("Error stopping recognition:", err);
+        // Ignore if already stopped
+      }
+    }
   }, []);
 
   const resetFinalTranscript = useCallback(() => {

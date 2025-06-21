@@ -2,7 +2,6 @@ import { AlertCircle, CheckCircle, Info } from "lucide-react";
 
 import { StatusType } from "@/types";
 
-
 const colorStyles = {
   gray: {
     bg: "bg-gray-800",
@@ -99,7 +98,11 @@ const statusConfig = {
   },
 };
 
-export default function Status({ statusType = "default" }: { statusType?: StatusType }) {
+export default function Status({
+  statusType = "default",
+}: {
+  statusType?: StatusType;
+}) {
   const message = statusConfig[statusType].message;
   const color = statusConfig[statusType].color;
   if (!message) return null;

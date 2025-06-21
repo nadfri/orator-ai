@@ -18,7 +18,7 @@ export default function CitationDetector() {
 
   const [status, setStatus] = useState<StatusType>("default");
   const [loader, setLoader] = useState(false);
-  const [citation, setCitation] = useState<Citation | Citation[] | null>(null);
+  const [citations, setCitations] = useState<Citation[]>([]);
   const [citationsHistory, setCitationsHistory] = useState<Citation[]>([]);
 
   const {
@@ -35,7 +35,7 @@ export default function CitationDetector() {
     if (!finalTranscript) return;
     const detect = async () => {
       setLoader(true);
-      setCitation(null);
+      setCitations([]);
       setStatus("searching");
 
       const res = (await detectCitation({
@@ -52,7 +52,7 @@ export default function CitationDetector() {
         Array.isArray(res.citations) &&
         res.citations.length > 0
       ) {
-        citationsToShow = res.citations.slice(0, 2); // On prend les 2 premières
+        citationsToShow = res.citations.slice(0, 2); // Take the first 2
       } else if (
         res?.citationTrouvee &&
         res.citation &&
@@ -70,15 +70,13 @@ export default function CitationDetector() {
         ];
       }
 
+      setCitations(citationsToShow);
       if (citationsToShow.length > 0) {
-        setCitation(citationsToShow);
         setStatus("found");
         setCitationsHistory((prev) => [...citationsToShow, ...prev]);
       } else if (res?.citationTrouvee === false) {
-        setCitation(null);
         setStatus("notfound");
       } else {
-        setCitation(null);
         setStatus("error");
       }
       resetFinalTranscript();
@@ -88,9 +86,8 @@ export default function CitationDetector() {
         if (!isListening) start();
       }, 1200);
     };
-
     detect();
-  }, [finalTranscript]);
+  }, [finalTranscript]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleMicClick = () => {
     if (isListening) {
@@ -114,15 +111,12 @@ export default function CitationDetector() {
       <Status statusType={status} />
 
       {/* Detected citation(s) */}
-      {Array.isArray(citation) && citation.length > 0
-        ? citation.map((c, i) => (
-            <CitationCard
-              key={i}
-              citation={c}
-            />
-          ))
-        : citation &&
-          !Array.isArray(citation) && <CitationCard citation={citation} />}
+      {citations.map((citation, i) => (
+        <CitationCard
+          key={i}
+          citation={citation}
+        />
+      ))}
 
       {/* History */}
       <CitationsHistory citations={citationsHistory} />

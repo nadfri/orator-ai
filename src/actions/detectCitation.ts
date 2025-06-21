@@ -68,7 +68,7 @@ export async function detectCitation({
     content = content.replace(/^```json\s*|```$/g, "").trim();
     try {
       return JSON.parse(content);
-    } catch (e) {
+    } catch {
       return { error: "Erreur de parsing JSON.", raw: content };
     }
   } catch (e) {
