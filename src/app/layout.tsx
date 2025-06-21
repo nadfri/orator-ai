@@ -12,8 +12,10 @@ const poppins = Poppins({
   variable: "--font-poppins",
 });
 
+const isDevelopment = process.env.NODE_ENV === "development";
+
 export const metadata: Metadata = {
-  title: "Orator AI",
+  title: `Orator AI ${isDevelopment ? " - Dev" : ""}`,
   description: "Ton assistant vocal",
 };
 
@@ -29,6 +31,7 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         {children}
+
         <StagewiseToolbar
           config={{
             plugins: [ReactPlugin],
