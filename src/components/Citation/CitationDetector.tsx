@@ -18,7 +18,7 @@ export default function CitationDetector() {
 
   const [status, setStatus] = useState<StatusType>("default");
   const [loader, setLoader] = useState(false);
-  const [citation, setCitation] = useState<Citation | null>(null);
+  const [citation, setCitation] = useState<Citation | Citation[] | null>(null);
   const [citationsHistory, setCitationsHistory] = useState<Citation[]>([]);
 
   const {
@@ -46,24 +46,34 @@ export default function CitationDetector() {
 
       setLoader(false);
 
+      let citationsToShow: Citation[] = [];
       if (
+        res?.citationTrouvee &&
+        Array.isArray(res.citations) &&
+        res.citations.length > 0
+      ) {
+        citationsToShow = res.citations.slice(0, 2); // On prend les 2 premières
+      } else if (
         res?.citationTrouvee &&
         res.citation &&
         res.auteur &&
         res.source &&
         res.date
       ) {
-        const newCitation: Citation = {
-          citation: res.citation,
-          auteur: res.auteur,
-          source: res.source,
-          date: res.date,
-        };
+        citationsToShow = [
+          {
+            citation: res.citation,
+            auteur: res.auteur,
+            source: res.source,
+            date: res.date,
+          },
+        ];
+      }
 
-        setCitation(newCitation);
+      if (citationsToShow.length > 0) {
+        setCitation(citationsToShow);
         setStatus("found");
-
-        setCitationsHistory((prev) => [newCitation, ...prev]);
+        setCitationsHistory((prev) => [...citationsToShow, ...prev]);
       } else if (res?.citationTrouvee === false) {
         setCitation(null);
         setStatus("notfound");
@@ -72,6 +82,11 @@ export default function CitationDetector() {
         setStatus("error");
       }
       resetFinalTranscript();
+      // Après un court délai, repasser en mode écoute
+      setTimeout(() => {
+        setStatus("listening");
+        if (!isListening) start();
+      }, 1200);
     };
 
     detect();
@@ -98,8 +113,16 @@ export default function CitationDetector() {
       {/* Status */}
       <Status statusType={status} />
 
-      {/* Detected citation */}
-      {citation && <CitationCard citation={citation} />}
+      {/* Detected citation(s) */}
+      {Array.isArray(citation) && citation.length > 0
+        ? citation.map((c, i) => (
+            <CitationCard
+              key={i}
+              citation={c}
+            />
+          ))
+        : citation &&
+          !Array.isArray(citation) && <CitationCard citation={citation} />}
 
       {/* History */}
       <CitationsHistory citations={citationsHistory} />

@@ -11,6 +11,7 @@ export type DetectionResult = {
   auteur?: string;
   source?: string;
   date?: string;
+  citations?: Citation[]; // Ajouté pour supporter plusieurs citations
   error?: string;
 };
 

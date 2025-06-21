@@ -8,6 +8,12 @@ export function useSpeechRecognition() {
   const [finalTranscript, setFinalTranscript] = useState<string | null>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
+  // Keep the value up-to-date even inside callbacks
+  const isListeningRef = useRef(isListening);
+  useEffect(() => {
+    isListeningRef.current = isListening;
+  }, [isListening]);
+
   useEffect(() => {
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -37,17 +43,28 @@ export function useSpeechRecognition() {
     };
 
     recognitionRef.current.onend = () => {
-      if (isListening && recognitionRef.current) recognitionRef.current.start();
+      // Always restart if isListening is true (latest value)
+      if (isListeningRef.current && recognitionRef.current) {
+        try {
+          recognitionRef.current.start();
+        } catch (e) {
+          // Ignore if already started
+        }
+      }
     };
     return () => {
       recognitionRef.current && recognitionRef.current.stop();
     };
-  }, [isListening]);
+  }, []); // Do not depend on isListening here, we use isListeningRef
 
   const start = useCallback(() => {
     if (!recognitionRef.current) return;
     setIsListening(true);
-    recognitionRef.current.start();
+    try {
+      recognitionRef.current.start();
+    } catch (e) {
+      // Ignore if already started
+    }
   }, []);
 
   const stop = useCallback(() => {

@@ -18,27 +18,32 @@ export async function detectCitation({
   }
 
   const prompt = `
-    Tu es un assistant chargé de détecter si le texte suivant contient une citation célèbre ou un proverbe.
-    Le texte peut être une transcription orale, donc il peut contenir des hésitations, des mots en trop, ou des formulations légèrement différentes de la citation originale. Sois très tolérant.
-    Si tu détectes une citation :
-    1. Identifie la citation exacte.
-    2. Identifie l'auteur (si connu, sinon "Auteur inconnu").
-    3. Identifie la source (œuvre, discours, etc. si connue, sinon "Source inconnue").
-    4. Identifie la date ou l'époque (si connue, sinon "Date inconnue").
-    Réponds UNIQUEMENT en JSON avec le format suivant. N'ajoute aucun texte avant ou après le JSON.
-    Si une citation est trouvée :
+    You are an assistant tasked with detecting whether the following text contains one or more famous quotes or proverbs.
+    The text may be a spoken transcription, so it may contain hesitations, extra words, or slightly different formulations from the original quote. Be very tolerant.
+    If you detect one or more quotes:
+    1. For each quote, identify the exact quote.
+    2. Identify the author (if known, otherwise "Unknown Author").
+    3. Identify the source (work, speech, etc. if known, otherwise "Unknown Source").
+    4. Identify the date or era (if known, otherwise "Unknown Date").
+    Respond ONLY in JSON with the following format. Do not add any text before or after the JSON.
+    If one or more quotes are found:
     {
       "citationTrouvee": true,
-      "citation": "La citation exacte et complète",
-      "auteur": "Nom de l'auteur",
-      "source": "Source de la citation",
-      "date": "Date ou époque"
+      "citations": [
+        {
+          "citation": "The exact and complete quote",
+          "auteur": "Author's name",
+          "source": "Source of the quote",
+          "date": "Date or era"
+        },
+        // ... possibly other quotes ...
+      ]
     }
-    Si aucune citation n'est clairement identifiée, même avec tolérance, réponds :
+    If no quote is clearly identified, even with tolerance, respond:
     {
       "citationTrouvee": false
     }
-    Voici le texte à analyser : "${text}"
+    Here is the text to analyze: "${text}"
   `;
   try {
     const response = await fetch(
